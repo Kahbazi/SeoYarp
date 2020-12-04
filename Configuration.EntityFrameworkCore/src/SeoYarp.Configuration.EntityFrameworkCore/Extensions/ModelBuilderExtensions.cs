@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,7 +16,7 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Extensions
                 modelBuilder.HasDefaultSchema(storeOptions.DefaultSchema);
             }
 
-            return modelBuilder.Entity<ProxyRoute>(route =>
+            modelBuilder.Entity<ProxyRoute>(route =>
             {
                 route.ToTable(storeOptions.ProxyRoutes);
 
@@ -52,11 +53,99 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Extensions
                     transform.Property(x => x.Data).HasJsonConversion();
                 });
             });
+
+
+            modelBuilder.Entity<Cluster>(cluster =>
+            {
+                cluster.ToTable(storeOptions.Clusters);
+
+                cluster.HasKey(c => c.Id);
+
+                cluster.Property(c => c.Id)
+                    .IsRequired()
+                    .ValueGeneratedNever()
+                    .HasMaxLength(250);
+
+                cluster.OwnsOne(c => c.LoadBalancing, loadBalancingOptions =>
+                {
+                    loadBalancingOptions.Property(l => l.Mode);
+                });
+
+                cluster.OwnsOne(c => c.SessionAffinity, sessionAffinityOptions =>
+                {
+                    sessionAffinityOptions.Property(s => s.Enabled);
+
+                    sessionAffinityOptions.Property(s => s.Mode)
+                        .HasMaxLength(250)
+                        .IsRequired();
+
+                    sessionAffinityOptions.Property(s => s.FailurePolicy)
+                        .HasMaxLength(250)
+                        .IsRequired();
+
+                    sessionAffinityOptions.Property(s => s.Settings)
+                        .HasJsonConversion();
+                });
+
+                cluster.OwnsOne(c => c.HealthCheck, healthCheckOptions =>
+                {
+                    healthCheckOptions.OwnsOne(h => h.Passive, passiveHealthCheckOptions =>
+                    {
+                        passiveHealthCheckOptions.Property(p => p.Enabled);
+
+                        passiveHealthCheckOptions.Property(p => p.Policy)
+                            .HasMaxLength(250);
+
+                        passiveHealthCheckOptions.Property(p => p.ReactivationPeriod);
+                    });
+                    healthCheckOptions.OwnsOne(h => h.Active, activeHealthCheckOptions =>
+                    {
+                        activeHealthCheckOptions.Property(p => p.Enabled);
+                        activeHealthCheckOptions.Property(p => p.Policy)
+                            .HasMaxLength(250);
+                        activeHealthCheckOptions.Property(p => p.Path)
+                            .HasMaxLength(250);
+                        activeHealthCheckOptions.Property(p => p.Interval);
+                        activeHealthCheckOptions.Property(p => p.Timeout);
+                    });
+                });
+
+                cluster.OwnsOne(c => c.HttpRequest, httpRequestOptions =>
+                {
+                    httpRequestOptions.Property(h => h.RequestTimeout);
+
+                    httpRequestOptions.Property(h => h.Version)
+                        .HasDefaultToStringConversion();
+                });
+
+                cluster.OwnsMany(c => c.Destinations, destination =>
+                {
+                    destination.Property(d => d.Address)
+                        .HasMaxLength(250)
+                        .IsRequired();
+
+                    destination.Property(d => d.Health)
+                        .HasMaxLength(250);
+
+                    destination.Property(d => d.Metadata)
+                        .HasJsonConversion();
+                });
+
+                cluster.Property(x => x.Metadata)
+                    .HasJsonConversion();
+            });
+
+            return modelBuilder;
         }
 
-        public static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder)
+        private static PropertyBuilder<TProperty> HasJsonConversion<TProperty>(this PropertyBuilder<TProperty> builder)
         {
             return builder.HasConversion(x => JsonSerializer.Serialize(x, null), x => JsonSerializer.Deserialize<TProperty>(x, null));
+        }
+
+        private static PropertyBuilder<TProperty> HasDefaultToStringConversion<TProperty>(this PropertyBuilder<TProperty> builder)
+        {
+            return builder.HasConversion(x => x.ToString(), x => (TProperty)Activator.CreateInstance(typeof(TProperty), x));
         }
 
         private static EntityTypeBuilder<TEntity> ToTable<TEntity>(this EntityTypeBuilder<TEntity> entityTypeBuilder, TableConfiguration configuration)

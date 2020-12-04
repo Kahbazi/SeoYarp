@@ -26,6 +26,7 @@ namespace SeoYarp.Configuration.EntityFrameworkCore
         }
 
         public DbSet<ProxyRoute> ProxyRoutes { get; set; }
+        public DbSet<Cluster> Clusters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

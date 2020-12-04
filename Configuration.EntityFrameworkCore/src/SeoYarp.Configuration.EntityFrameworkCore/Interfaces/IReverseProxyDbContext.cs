@@ -6,5 +6,6 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Interfaces
     public interface IReverseProxyDbContext
     {
         DbSet<ProxyRoute> ProxyRoutes { get; set; }
+        DbSet<Cluster> Clusters { get; set; }
     }
 }

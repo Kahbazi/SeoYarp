@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace SeoYarp.Configuration.EntityFrameworkCore.Models
+namespace SeoYarp.Configuration.EntityFrameworkCore.Entities
 {
     public class ActiveHealthCheckOptions
     {
