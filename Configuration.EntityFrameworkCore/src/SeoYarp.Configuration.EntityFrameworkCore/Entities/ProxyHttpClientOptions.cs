@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
-namespace SeoYarp.Configuration.EntityFrameworkCore.Models
+namespace SeoYarp.Configuration.EntityFrameworkCore.Entities
 {
     public class ProxyHttpClientOptions
     {

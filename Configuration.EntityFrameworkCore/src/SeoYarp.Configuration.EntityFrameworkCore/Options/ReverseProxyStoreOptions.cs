@@ -55,5 +55,13 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Options
         /// The route transforms.
         /// </value>
         public TableConfiguration RouteTransforms { get; set; } = new TableConfiguration("RouteTransforms");
+
+        /// <summary>
+        /// Gets or sets the clusters table configuration.
+        /// </summary>
+        /// <value>
+        /// The clusters.
+        /// </value>
+        public TableConfiguration Clusters { get; set; } = new TableConfiguration("Clusters");
     }
 }
