@@ -8,6 +8,7 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Entities
         public LoadBalancingOptions LoadBalancing { get; set; }
         public SessionAffinityOptions SessionAffinity { get; set; }
         public HealthCheckOptions HealthCheck { get; set; }
+        public ProxyHttpClientOptions HttpClient { get; set; }
         public ProxyHttpRequestOptions HttpRequest { get; set; }
         public IList<Destination> Destinations { get; set; }
         public IDictionary<string, string> Metadata { get; set; }

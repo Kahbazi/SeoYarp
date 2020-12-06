@@ -71,6 +71,14 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Extensions
                     loadBalancingOptions.Property(l => l.Mode);
                 });
 
+                cluster.OwnsOne(c => c.HttpClient, httpClientOptions =>
+                {
+                    httpClientOptions.Property(l => l.SslProtocols);
+                    httpClientOptions.Property(l => l.DangerousAcceptAnyServerCertificate);
+                    httpClientOptions.Property(l => l.MaxConnectionsPerServer);
+                    httpClientOptions.Property(l => l.PropagateActivityContext);
+                });
+
                 cluster.OwnsOne(c => c.SessionAffinity, sessionAffinityOptions =>
                 {
                     sessionAffinityOptions.Property(s => s.Enabled);
@@ -112,7 +120,7 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Extensions
 
                 cluster.OwnsOne(c => c.HttpRequest, httpRequestOptions =>
                 {
-                    httpRequestOptions.Property(h => h.RequestTimeout);
+                    httpRequestOptions.Property(h => h.Timeout);
 
                     httpRequestOptions.Property(h => h.Version)
                         .HasDefaultToStringConversion();
@@ -120,6 +128,10 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Extensions
 
                 cluster.OwnsMany(c => c.Destinations, destination =>
                 {
+                    destination.Property(d => d.Key)
+                        .HasMaxLength(250)
+                        .IsRequired();
+
                     destination.Property(d => d.Address)
                         .HasMaxLength(250)
                         .IsRequired();
