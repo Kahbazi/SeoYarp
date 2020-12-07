@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.ReverseProxy.Abstractions;
@@ -52,7 +51,7 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Mappings
             _ = destination ?? throw new ArgumentNullException(nameof(destination));
 
             return new Destination {
-                Address = destination.Address, Health = destination.Address, Metadata = destination.Metadata
+                Address = destination.Address, Health = destination.Health, Metadata = destination.Metadata
             };
         }
 
