@@ -6,11 +6,13 @@ namespace SeoYarp.Configuration.EntityFrameworkCore
 {
     public class EntityFrameworkConfigProvider : IProxyConfigProvider
     {
-        private readonly IReverseProxyDbContext _reverseProxyDbContext;
+        private readonly IServiceProvider _serviceProvider;
+        private TimeSpan? _periodicCheckInterval;
 
-        public EntityFrameworkConfigProvider(IReverseProxyDbContext reverseProxyDbContext)
+        public EntityFrameworkConfigProvider(IServiceProvider serviceProvider, TimeSpan? periodicCheckInterval)
         {
-            _reverseProxyDbContext = reverseProxyDbContext;
+            _serviceProvider = serviceProvider;
+            _periodicCheckInterval = periodicCheckInterval;
         }
 
         public IProxyConfig GetConfig()

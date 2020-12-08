@@ -1,13 +1,20 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.ReverseProxy.Service;
 using SeoYarp.Configuration.EntityFrameworkCore.Mappings;
 
 namespace SeoYarp.Configuration.EntityFrameworkCore.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddDefaultEntityMapper(this IServiceCollection services)
+        public static IServiceCollection AddSeoYarp(this IServiceCollection services, Action<SeoYarpBuilder> builder)
         {
-            return services.AddScoped<IMapper, DefaultMapper>();
+            var seoYarpBuilder = new SeoYarpBuilder(services);
+            builder(seoYarpBuilder);
+            seoYarpBuilder.Build();
+            services.AddSingleton<IProxyConfigProvider>(sp => new EntityFrameworkConfigProvider(sp, seoYarpBuilder.PeriodicCheckInterval));
+            return services;
         }
+
     }
 }
