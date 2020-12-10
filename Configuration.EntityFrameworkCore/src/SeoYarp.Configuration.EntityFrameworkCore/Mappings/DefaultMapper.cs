@@ -29,7 +29,7 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Mappings
             _ = cluster ?? throw new ArgumentNullException(nameof(cluster));
 
             var newCluster = new Cluster {
-                Id = cluster.Id,
+                Id = cluster.ClusterId,
                 Metadata = cluster.Metadata,
                 HealthCheck = ToYarpHealthCheckOptions(cluster.HealthCheck),
                 HttpClient = ToYarpProxyHttpClientOptions(cluster.HttpClient),

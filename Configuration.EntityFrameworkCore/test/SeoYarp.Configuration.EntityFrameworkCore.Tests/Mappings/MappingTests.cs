@@ -51,7 +51,8 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Tests.Mappings
             };
 
             var cluster = new Cluster {
-                Id = "DEFAULT",
+                Id = 1,
+                ClusterId = "CLUSTER_ID",
                 Destinations = new List<Destination> {destination},
                 Metadata = new Dictionary<string, string> {{"KEY", "VALUE"}},
                 HealthCheck =
@@ -72,7 +73,7 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Tests.Mappings
             var mappedSessionAffinityOptions = mappedCluster.SessionAffinity;
 
             // cluster
-            Assert.Equal(cluster.Id, mappedCluster.Id);
+            Assert.Equal(cluster.ClusterId, mappedCluster.Id);
             Assert.Equal(JsonSerializer.Serialize(cluster.Metadata), JsonSerializer.Serialize(mappedCluster.Metadata));
 
             // destination
