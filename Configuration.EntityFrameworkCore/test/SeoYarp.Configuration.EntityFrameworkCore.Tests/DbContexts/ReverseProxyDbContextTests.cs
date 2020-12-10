@@ -114,6 +114,5 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Tests.DbContexts
                 Assert.Empty(proxyRoute.Match.Headers);
             }
         }
-
     }
 }

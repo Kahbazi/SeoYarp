@@ -4,7 +4,8 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Entities
 {
     public class Cluster
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
+        public string ClusterId { get; set; }
         public LoadBalancingOptions LoadBalancing { get; set; }
         public SessionAffinityOptions SessionAffinity { get; set; }
         public HealthCheckOptions HealthCheck { get; set; }

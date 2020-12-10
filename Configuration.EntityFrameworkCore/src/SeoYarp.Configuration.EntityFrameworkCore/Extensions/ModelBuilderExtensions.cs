@@ -54,16 +54,19 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Extensions
                 });
             });
 
+            return modelBuilder;
+        }
 
+        public static ModelBuilder ConfigureClusters(this ModelBuilder modelBuilder, ReverseProxyStoreOptions storeOptions)
+        {
             modelBuilder.Entity<Cluster>(cluster =>
             {
                 cluster.ToTable(storeOptions.Clusters);
 
                 cluster.HasKey(c => c.Id);
 
-                cluster.Property(c => c.Id)
+                cluster.Property(c => c.ClusterId)
                     .IsRequired()
-                    .ValueGeneratedNever()
                     .HasMaxLength(250);
 
                 cluster.OwnsOne(c => c.LoadBalancing, loadBalancingOptions =>
@@ -123,7 +126,7 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Extensions
                     httpRequestOptions.Property(h => h.Timeout);
 
                     httpRequestOptions.Property(h => h.Version)
-                        .HasDefaultToStringConversion();
+                        .HasVersionConversion();
                 });
 
                 cluster.OwnsMany(c => c.Destinations, destination =>
@@ -155,9 +158,9 @@ namespace SeoYarp.Configuration.EntityFrameworkCore.Extensions
             return builder.HasConversion(x => JsonSerializer.Serialize(x, null), x => JsonSerializer.Deserialize<TProperty>(x, null));
         }
 
-        private static PropertyBuilder<TProperty> HasDefaultToStringConversion<TProperty>(this PropertyBuilder<TProperty> builder)
+        private static PropertyBuilder<Version> HasVersionConversion(this PropertyBuilder<Version> builder)
         {
-            return builder.HasConversion(x => x.ToString(), x => (TProperty)Activator.CreateInstance(typeof(TProperty), x));
+            return builder.HasConversion(x => x.ToString(), x => new Version(x));
         }
 
         private static EntityTypeBuilder<TEntity> ToTable<TEntity>(this EntityTypeBuilder<TEntity> entityTypeBuilder, TableConfiguration configuration)
